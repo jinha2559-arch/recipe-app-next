@@ -1,0 +1,26 @@
+# 의존성
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# 빌드 결과
+/.next/
+/out/
+
+# 환경변수 (절대 깃허브에 올리면 안 됨!)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 로그
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 기타
+.DS_Store
+*.pem
+.vercel

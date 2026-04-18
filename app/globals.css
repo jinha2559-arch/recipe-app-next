@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+:root {
+  --font-pretendard: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-pretendard);
+  background-color: #FFF8F3;
+  color: #1a1a1a;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 히어로 그라디언트 */
+.hero-gradient {
+  background: linear-gradient(135deg, #FF5722 0%, #FF7043 40%, #FFB74D 100%);
+}
+
+/* 레시피 마크다운 스타일 */
+.recipe-content {
+  line-height: 1.8;
+  word-break: keep-all;
+}
+
+.recipe-content h2, .recipe-content h3 {
+  font-weight: 700;
+  margin-top: 1.2em;
+  margin-bottom: 0.4em;
+  color: #1a1a1a;
+}
+
+.recipe-content ul, .recipe-content ol {
+  padding-left: 1.2em;
+  margin: 0.4em 0;
+}
+
+.recipe-content li {
+  margin: 0.2em 0;
+}
+
+/* 스켈레톤 로딩 */
+.skeleton {
+  background: linear-gradient(90deg, #f0e8e0 25%, #e8ddd4 50%, #f0e8e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* 탭 언더라인 애니메이션 */
+.tab-indicator {
+  transition: left 0.25s ease, width 0.25s ease;
+}
+
+/* 스크롤바 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF3E0;
+}
+::-webkit-scrollbar-thumb {
+  background: #FFCCBC;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FF8A65;
+}
+
+/* 버튼 활성 상태 */
+button:active {
+  transform: scale(0.97);
+}
+
+/* 파일 입력 숨기기 */
+input[type="file"] {
+  display: none;
+}
