@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   try {
-    const { imageBase64, mimeType } = await request.json();
+    const { imageBase64, mimeType, excludeTitle } = await request.json();
 
     if (!imageBase64 || typeof imageBase64 !== "string") {
       return NextResponse.json({ error: "이미지가 없습니다." }, { status: 400 });
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
 ## 💡 오늘의 요리 팁
 간단하고 유용한 팁 1-2가지
 
-모든 설명은 한국어로, 쉽고 친근하게 작성해줘.`,
+모든 설명은 한국어로, 쉽고 친근하게 작성해줘.${excludeTitle ? `\n\n⚠️ 중요: 이미 "${excludeTitle}" 레시피를 추천했으니, 반드시 완전히 다른 요리를 추천해줘.` : ""}`,
                 },
               ],
             },

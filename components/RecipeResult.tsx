@@ -6,6 +6,7 @@ interface RecipeResultProps {
   content: string;
   title: string;
   deviceId: string;
+  onReanalyze?: () => void;
 }
 
 // 섹션 헤딩에 따른 아이콘/색깔 매핑
@@ -30,7 +31,7 @@ function getSectionStyle(heading: string) {
     : { icon: "📌", bg: "#F5F5F5", text: "#424242" };
 }
 
-export default function RecipeResult({ content, title, deviceId }: RecipeResultProps) {
+export default function RecipeResult({ content, title, deviceId, onReanalyze }: RecipeResultProps) {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "duplicate" | "error">("idle");
 
   async function handleSave() {
@@ -217,6 +218,24 @@ export default function RecipeResult({ content, title, deviceId }: RecipeResultP
           {renderContent(content)}
         </div>
       </div>
+
+      {/* 다른 레시피 추천받기 버튼 */}
+      {onReanalyze && (
+        <div className="px-4 pb-3">
+          <button
+            onClick={onReanalyze}
+            className="w-full py-3.5 rounded-2xl font-bold transition-all active:scale-95"
+            style={{
+              background: "#FFF3EE",
+              color: "#FF5722",
+              fontSize: "14px",
+              border: "1.5px solid #FFD0BC",
+            }}
+          >
+            🔄 이 재료로 다른 레시피 추천받기
+          </button>
+        </div>
+      )}
 
       {/* 저장 버튼 — full-width 임팩트 */}
       <div className="px-4 pb-6">

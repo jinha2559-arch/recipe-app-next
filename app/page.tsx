@@ -12,7 +12,7 @@ type Tab = "recommend" | "saved";
 type AnalysisState =
   | { status: "idle" }
   | { status: "loading" }
-  | { status: "success"; content: string; title: string; imageUrl: string }
+  | { status: "success"; content: string; title: string; imageUrl: string; imageBase64: string; mimeType: string }
   | { status: "error"; message: string };
 
 // EXIF Orientation 값 읽기 (JPEG만 해당, 오류 시 1 반환)
@@ -146,6 +146,8 @@ export default function Home() {
         content: data.content,
         title: data.title,
         imageUrl,
+        imageBase64: base64,
+        mimeType,
       });
 
       // 저장 후 저장된 레시피 탭 새로고침용 키 올리기
@@ -158,6 +160,40 @@ export default function Home() {
       URL.revokeObjectURL(imageUrl);
     }
   }, []);
+
+  // 같은 사진으로 다른 레시피 재분석
+  const handleReanalyze = useCallback(async () => {
+    if (analysisState.status !== "success") return;
+    const { imageUrl, imageBase64, mimeType, title: prevTitle } = analysisState;
+
+    setAnalysisState({ status: "loading" });
+
+    try {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageBase64, mimeType, excludeTitle: prevTitle }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "분석에 실패했습니다.");
+
+      setAnalysisState({
+        status: "success",
+        content: data.content,
+        title: data.title,
+        imageUrl,
+        imageBase64,
+        mimeType,
+      });
+      setSavedRefreshKey((k) => k + 1);
+    } catch (err) {
+      setAnalysisState({
+        status: "error",
+        message: err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.",
+      });
+      URL.revokeObjectURL(imageUrl);
+    }
+  }, [analysisState]);
 
   function handleTabChange(tab: Tab) {
     if (tab === activeTab) return;
@@ -276,7 +312,7 @@ export default function Home() {
               {/* 성공 상태 */}
               {analysisState.status === "success" && (
                 <div>
-                  {/* 업로드한 사진 미리보기 + 다시 분석하기 버튼 */}
+                  {/* 업로드한 사진 미리보기 */}
                   <div className="px-4 mb-3">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -289,28 +325,12 @@ export default function Home() {
                         imageOrientation: "from-image",
                       }}
                     />
-                    {/* 사진 바로 아래 — 항상 보이는 위치 */}
-                    <button
-                      onClick={() => {
-                        URL.revokeObjectURL(analysisState.imageUrl);
-                        setAnalysisState({ status: "idle" });
-                      }}
-                      className="mt-2 inline-flex items-center gap-2 font-semibold rounded-xl px-4 py-2.5 w-full justify-center active:scale-95 transition-all"
-                      style={{
-                        background: "#FFF3EE",
-                        color: "#FF5722",
-                        fontSize: "13px",
-                        border: "1.5px solid #FFD0BC",
-                      }}
-                    >
-                      <span>📷</span>
-                      <span>다른 사진으로 다시 분석하기</span>
-                    </button>
                   </div>
                   <RecipeResult
                     content={analysisState.content}
                     title={analysisState.title}
                     deviceId={deviceId}
+                    onReanalyze={handleReanalyze}
                   />
                 </div>
               )}
