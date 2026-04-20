@@ -296,16 +296,21 @@ export default function Home() {
                     deviceId={deviceId}
                   />
                   {/* 다시 분석하기 버튼 */}
-                  <div className="px-4 pb-8 -mt-2 text-center">
+                  <div className="px-4 pb-8 text-center">
                     <button
                       onClick={() => {
                         URL.revokeObjectURL(analysisState.imageUrl);
                         setAnalysisState({ status: "idle" });
                       }}
-                      className="inline-flex items-center gap-1.5 text-gray-400 font-medium transition-colors hover:text-orange-500 active:scale-95"
-                      style={{ fontSize: "13px" }}
+                      className="inline-flex items-center gap-2 font-semibold rounded-2xl px-5 py-3 w-full justify-center active:scale-95 transition-all"
+                      style={{
+                        background: "#FFF3EE",
+                        color: "#FF5722",
+                        fontSize: "14px",
+                        border: "1.5px solid #FFD0BC",
+                      }}
                     >
-                      <span>↩</span>
+                      <span>📷</span>
                       <span>다른 사진으로 다시 분석하기</span>
                     </button>
                   </div>
