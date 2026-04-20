@@ -318,9 +318,10 @@ export default function Home() {
                     <img
                       src={analysisState.imageUrl}
                       alt="분석한 사진"
-                      className="w-full object-cover rounded-2xl"
+                      className="w-full object-contain rounded-2xl"
                       style={{
-                        maxHeight: "200px",
+                        maxHeight: "300px",
+                        background: "#f5f0eb",
                         boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
                         imageOrientation: "from-image",
                       }}
