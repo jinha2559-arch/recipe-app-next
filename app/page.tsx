@@ -276,7 +276,7 @@ export default function Home() {
               {/* 성공 상태 */}
               {analysisState.status === "success" && (
                 <div>
-                  {/* 업로드한 사진 미리보기 */}
+                  {/* 업로드한 사진 미리보기 + 다시 분석하기 버튼 */}
                   <div className="px-4 mb-3">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -289,24 +289,17 @@ export default function Home() {
                         imageOrientation: "from-image",
                       }}
                     />
-                  </div>
-                  <RecipeResult
-                    content={analysisState.content}
-                    title={analysisState.title}
-                    deviceId={deviceId}
-                  />
-                  {/* 다시 분석하기 버튼 */}
-                  <div className="px-4 pb-8 text-center">
+                    {/* 사진 바로 아래 — 항상 보이는 위치 */}
                     <button
                       onClick={() => {
                         URL.revokeObjectURL(analysisState.imageUrl);
                         setAnalysisState({ status: "idle" });
                       }}
-                      className="inline-flex items-center gap-2 font-semibold rounded-2xl px-5 py-3 w-full justify-center active:scale-95 transition-all"
+                      className="mt-2 inline-flex items-center gap-2 font-semibold rounded-xl px-4 py-2.5 w-full justify-center active:scale-95 transition-all"
                       style={{
                         background: "#FFF3EE",
                         color: "#FF5722",
-                        fontSize: "14px",
+                        fontSize: "13px",
                         border: "1.5px solid #FFD0BC",
                       }}
                     >
@@ -314,6 +307,11 @@ export default function Home() {
                       <span>다른 사진으로 다시 분석하기</span>
                     </button>
                   </div>
+                  <RecipeResult
+                    content={analysisState.content}
+                    title={analysisState.title}
+                    deviceId={deviceId}
+                  />
                 </div>
               )}
 
