@@ -14,11 +14,26 @@ interface SavedRecipesProps {
   refreshKey: number; // 저장 후 목록 새로고침용
 }
 
+// 제목에서 음식 이모지 추정
+const FOOD_EMOJIS = ["🍜", "🍚", "🥘", "🍲", "🥗", "🍝", "🥩", "🍗", "🥚", "🥦", "🍅", "🧆", "🥙", "🍛", "🫕"];
+function getRecipeEmoji(title: string, index: number): string {
+  if (title.includes("파스타") || title.includes("스파게티")) return "🍝";
+  if (title.includes("밥") || title.includes("볶음밥") || title.includes("비빔밥")) return "🍚";
+  if (title.includes("국") || title.includes("찌개") || title.includes("탕")) return "🍲";
+  if (title.includes("샐러드")) return "🥗";
+  if (title.includes("계란") || title.includes("달걀")) return "🥚";
+  if (title.includes("닭") || title.includes("치킨")) return "🍗";
+  if (title.includes("고기") || title.includes("소고기") || title.includes("돼지")) return "🥩";
+  if (title.includes("면") || title.includes("라면") || title.includes("우동")) return "🍜";
+  return FOOD_EMOJIS[index % FOOD_EMOJIS.length];
+}
+
 export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps) {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const fetchRecipes = useCallback(async () => {
     if (!deviceId) return;
@@ -39,7 +54,11 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
   }, [fetchRecipes, refreshKey]);
 
   async function handleDelete(id: string) {
-    if (!confirm("이 레시피를 삭제할까요?")) return;
+    if (confirmDeleteId !== id) {
+      setConfirmDeleteId(id);
+      return;
+    }
+    setConfirmDeleteId(null);
     setDeletingId(id);
     try {
       await fetch(`/api/recipes/${id}`, {
@@ -96,7 +115,7 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
     return (
       <div className="px-4 py-4 space-y-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="skeleton h-16 w-full" />
+          <div key={i} className="skeleton rounded-2xl" style={{ height: "72px" }} />
         ))}
       </div>
     );
@@ -105,35 +124,90 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
   // 빈 상태 (UC16)
   if (recipes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-8 text-center animate-fade-in">
-        <div className="text-5xl mb-4">📭</div>
-        <p className="text-gray-500 font-medium mb-1">아직 저장된 레시피가 없어요</p>
-        <p className="text-gray-400 text-sm">레시피를 추천받고 저장해보세요!</p>
+      <div className="flex flex-col items-center justify-center px-8 text-center animate-fade-in" style={{ paddingTop: "48px", paddingBottom: "48px" }}>
+        {/* 일러스트 느낌 이모지 박스 */}
+        <div
+          className="flex items-center justify-center rounded-3xl bg-orange-50 mb-5"
+          style={{ width: "100px", height: "100px" }}
+        >
+          <span style={{ fontSize: "52px" }}>🍱</span>
+        </div>
+        <p className="font-bold text-gray-700 mb-2" style={{ fontSize: "16px" }}>
+          아직 저장된 레시피가 없어요
+        </p>
+        <p className="text-gray-400 leading-relaxed mb-4" style={{ fontSize: "13px", wordBreak: "keep-all" }}>
+          레시피를 추천받고 저장 버튼을 누르면<br />
+          여기서 언제든 다시 볼 수 있어요!
+        </p>
+        {/* 안내 칩 */}
+        <div
+          className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5"
+          style={{ background: "#FFF3E0", fontSize: "12px", color: "#FF7043", fontWeight: 600 }}
+        >
+          <span>📱</span>
+          <span>이 기기에서만 보여요</span>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="px-4 py-2 space-y-3 pb-10 animate-fade-in">
-      <p className="text-xs text-gray-400 text-right mb-1">
-        이 기기에서 저장한 레시피 {recipes.length}개
-      </p>
+      {/* 상단 안내 */}
+      <div className="flex items-center justify-between mb-1">
+        <div
+          className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1"
+          style={{ background: "#FFF3E0", fontSize: "11px", color: "#FF7043", fontWeight: 600 }}
+        >
+          <span>📱</span>
+          <span>이 기기에서만 보여요</span>
+        </div>
+        <p className="text-xs text-gray-400 font-medium">
+          {recipes.length}개 저장됨
+        </p>
+      </div>
 
-      {recipes.map((recipe) => (
+      {recipes.map((recipe, index) => (
         <div
           key={recipe.id}
-          className="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden"
+          className="card-lift bg-white rounded-2xl overflow-hidden"
+          style={{
+            boxShadow: "0 2px 12px rgba(255,87,34,0.08), 0 1px 3px rgba(0,0,0,0.05)",
+            border: "1px solid #FFE8DC",
+          }}
         >
-          {/* 헤더 — 제목 + 버튼 */}
+          {/* 헤더 — 클릭으로 펼치기/접기 */}
           <div
-            className="flex items-center justify-between p-4 cursor-pointer"
-            onClick={() => setExpandedId(expandedId === recipe.id ? null : recipe.id)}
+            className="flex items-center p-4 cursor-pointer"
+            onClick={() => {
+              setExpandedId(expandedId === recipe.id ? null : recipe.id);
+              setConfirmDeleteId(null);
+            }}
           >
-            <div className="flex-1 min-w-0 pr-2">
-              <p className="font-semibold text-gray-900 text-sm truncate">{recipe.title}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{formatDate(recipe.created_at)}</p>
+            {/* 음식 이모지 원형 배지 */}
+            <div
+              className="shrink-0 flex items-center justify-center rounded-xl mr-3"
+              style={{ width: "44px", height: "44px", background: "#FFF3E0", fontSize: "22px" }}
+            >
+              {getRecipeEmoji(recipe.title, index)}
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+
+            {/* 제목 + 날짜 */}
+            <div className="flex-1 min-w-0">
+              <p
+                className="font-bold text-gray-900 truncate"
+                style={{ fontSize: "14px" }}
+              >
+                {recipe.title}
+              </p>
+              <div className="date-badge mt-1">
+                <span>🕐</span>
+                <span>{formatDate(recipe.created_at)}</span>
+              </div>
+            </div>
+
+            {/* 버튼들 */}
+            <div className="flex items-center gap-2 shrink-0 ml-2">
               {/* 삭제 버튼 */}
               <button
                 onClick={(e) => {
@@ -141,11 +215,20 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
                   handleDelete(recipe.id);
                 }}
                 disabled={deletingId === recipe.id}
-                className="text-gray-300 hover:text-red-400 transition-colors p-1"
+                className="transition-all duration-150 rounded-lg px-2 py-1"
+                style={{
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  background: confirmDeleteId === recipe.id ? "#FFEBEE" : "transparent",
+                  color: confirmDeleteId === recipe.id ? "#E53935" : "#BDBDBD",
+                  border: confirmDeleteId === recipe.id ? "1px solid #FFCDD2" : "1px solid transparent",
+                }}
                 aria-label="삭제"
               >
                 {deletingId === recipe.id ? (
-                  <span className="text-xs">...</span>
+                  <span>삭제 중...</span>
+                ) : confirmDeleteId === recipe.id ? (
+                  <span>정말 삭제?</span>
                 ) : (
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -153,21 +236,32 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
                   </svg>
                 )}
               </button>
+
               {/* 펼치기/접기 화살표 */}
-              <svg
-                className={`w-4 h-4 text-gray-400 transition-transform ${
-                  expandedId === recipe.id ? "rotate-180" : ""
-                }`}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              <div
+                className="flex items-center justify-center rounded-full transition-all duration-200"
+                style={{
+                  width: "28px",
+                  height: "28px",
+                  background: expandedId === recipe.id ? "#FFF3E0" : "#F5F5F5",
+                }}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
+                <svg
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    expandedId === recipe.id ? "rotate-180" : ""
+                  }`}
+                  style={{ color: expandedId === recipe.id ? "#FF5722" : "#9E9E9E" }}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
             </div>
           </div>
 
           {/* 펼쳐진 내용 */}
           {expandedId === recipe.id && (
-            <div className="px-4 pb-4 border-t border-orange-50">
+            <div className="px-4 pb-4 border-t" style={{ borderColor: "#FFF0E8" }}>
               <div className="recipe-content mt-3">{renderContent(recipe.content)}</div>
             </div>
           )}

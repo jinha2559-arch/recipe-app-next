@@ -20,25 +20,42 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 히어로 그라디언트 */
+/* ── 히어로 그라디언트 ── */
 .hero-gradient {
-  background: linear-gradient(135deg, #FF5722 0%, #FF7043 40%, #FFB74D 100%);
+  background: linear-gradient(150deg,
+    #FF3D00 0%,
+    #FF5722 30%,
+    #FF7043 60%,
+    #FFAB40 100%
+  );
 }
 
-/* 레시피 마크다운 스타일 */
+/* 히어로 노이즈 텍스처 오버레이 */
+.hero-noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── 레시피 마크다운 스타일 ── */
 .recipe-content {
   line-height: 1.8;
   word-break: keep-all;
 }
 
-.recipe-content h2, .recipe-content h3 {
+.recipe-content h2,
+.recipe-content h3 {
   font-weight: 700;
   margin-top: 1.2em;
   margin-bottom: 0.4em;
   color: #1a1a1a;
 }
 
-.recipe-content ul, .recipe-content ol {
+.recipe-content ul,
+.recipe-content ol {
   padding-left: 1.2em;
   margin: 0.4em 0;
 }
@@ -47,7 +64,7 @@ body {
   margin: 0.2em 0;
 }
 
-/* 스켈레톤 로딩 */
+/* ── 스켈레톤 로딩 ── */
 .skeleton {
   background: linear-gradient(90deg, #f0e8e0 25%, #e8ddd4 50%, #f0e8e0 75%);
   background-size: 200% 100%;
@@ -55,12 +72,12 @@ body {
   border-radius: 8px;
 }
 
-/* 탭 언더라인 애니메이션 */
+/* ── 탭 언더라인 애니메이션 ── */
 .tab-indicator {
   transition: left 0.25s ease, width 0.25s ease;
 }
 
-/* 스크롤바 */
+/* ── 스크롤바 ── */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -75,12 +92,133 @@ body {
   background: #FF8A65;
 }
 
-/* 버튼 활성 상태 */
+/* ── 버튼 활성 상태 ── */
 button:active {
   transform: scale(0.97);
 }
 
-/* 파일 입력 숨기기 */
+/* ── 파일 입력 숨기기 ── */
 input[type="file"] {
   display: none;
+}
+
+/* ── 카메라 버튼 그라디언트 ── */
+.btn-camera {
+  background: linear-gradient(135deg, #FF5722 0%, #FF7043 100%);
+  box-shadow: 0 4px 16px rgba(255, 87, 34, 0.35);
+}
+.btn-camera:hover {
+  box-shadow: 0 6px 20px rgba(255, 87, 34, 0.45);
+}
+.btn-camera:active {
+  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.3);
+}
+
+/* ── 갤러리 버튼 ── */
+.btn-gallery {
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(255, 87, 34, 0.12);
+}
+.btn-gallery:hover {
+  box-shadow: 0 4px 16px rgba(255, 87, 34, 0.2);
+}
+
+/* ── 탭 콘텐츠 fade ── */
+.tab-content-enter {
+  animation: tabFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── 레시피 섹션 배지 ── */
+.recipe-section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ── 저장 버튼 그라디언트 ── */
+.btn-save-idle {
+  background: linear-gradient(135deg, #FF5722 0%, #FF7043 100%);
+  box-shadow: 0 4px 16px rgba(255, 87, 34, 0.3);
+}
+.btn-save-idle:hover {
+  box-shadow: 0 6px 22px rgba(255, 87, 34, 0.4);
+}
+
+/* ── 음식 패턴 dots ── */
+.food-dots-pattern {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ── 로딩 dots 애니메이션 ── */
+.loading-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #FF5722;
+  animation: dotBounce 1.4s ease-in-out infinite;
+}
+.loading-dot:nth-child(1) { animation-delay: 0s; }
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ── 카드 hover 리프트 ── */
+.card-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 87, 34, 0.12);
+}
+
+/* ── 날짜 뱃지 ── */
+.date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #FFF3E0;
+  color: #FF7043;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+/* ── 에러 카드 ── */
+.error-card {
+  background: linear-gradient(135deg, #FFF5F5 0%, #FFF0EE 100%);
+  border: 1.5px solid #FFCDD2;
+}
+
+/* ── 성공 카드 그라디언트 라인 ── */
+.recipe-card-top-line {
+  height: 3px;
+  background: linear-gradient(90deg, #FF5722, #FFAB40);
+  border-radius: 3px 3px 0 0;
 }
