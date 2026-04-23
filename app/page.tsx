@@ -161,6 +161,13 @@ export default function Home() {
     }
   }, []);
 
+  // 레시피 저장 완료 — 목록 새로고침 + 저장된 탭으로 이동
+  const handleSaved = useCallback(() => {
+    setSavedRefreshKey((k) => k + 1);
+    setActiveTab("saved");
+    setTabKey((k) => k + 1);
+  }, []);
+
   // 같은 사진으로 다른 레시피 재분석
   const handleReanalyze = useCallback(async () => {
     if (analysisState.status !== "success") return;
@@ -332,6 +339,7 @@ export default function Home() {
                     title={analysisState.title}
                     deviceId={deviceId}
                     onReanalyze={handleReanalyze}
+                    onSaved={handleSaved}
                   />
                 </div>
               )}

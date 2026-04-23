@@ -7,6 +7,7 @@ interface RecipeResultProps {
   title: string;
   deviceId: string;
   onReanalyze?: () => void;
+  onSaved?: () => void;
 }
 
 // 섹션 헤딩에 따른 아이콘/색깔 매핑
@@ -31,7 +32,7 @@ function getSectionStyle(heading: string) {
     : { icon: "📌", bg: "#F5F5F5", text: "#424242" };
 }
 
-export default function RecipeResult({ content, title, deviceId, onReanalyze }: RecipeResultProps) {
+export default function RecipeResult({ content, title, deviceId, onReanalyze, onSaved }: RecipeResultProps) {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "duplicate" | "error">("idle");
 
   async function handleSave() {
@@ -51,6 +52,7 @@ export default function RecipeResult({ content, title, deviceId, onReanalyze }: 
         throw new Error(data.error || "저장 실패");
       } else {
         setSaveState("saved");
+        setTimeout(() => onSaved?.(), 1200);
       }
     } catch {
       setSaveState("error");

@@ -34,6 +34,7 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchRecipes = useCallback(async () => {
     if (!deviceId) return;
@@ -151,8 +152,37 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
     );
   }
 
+  const filteredRecipes = searchQuery.trim()
+    ? recipes.filter((r) => r.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    : recipes;
+
   return (
     <div className="px-4 py-2 space-y-3 pb-10 animate-fade-in">
+      {/* 검색창 */}
+      <div
+        className="flex items-center gap-2 px-3 py-2.5 rounded-2xl bg-white"
+        style={{ border: "1px solid #FFE8DC", boxShadow: "0 1px 4px rgba(255,87,34,0.06)" }}
+      >
+        <svg className="w-4 h-4 shrink-0" style={{ color: "#FFAB91" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input
+          type="text"
+          placeholder="레시피 이름 검색..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="flex-1 bg-transparent outline-none text-gray-700"
+          style={{ fontSize: "13px" }}
+        />
+        {searchQuery && (
+          <button onClick={() => setSearchQuery("")} className="shrink-0 text-gray-400 hover:text-gray-600">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
+      </div>
+
       {/* 상단 안내 */}
       <div className="flex items-center justify-between mb-1">
         <div
@@ -163,11 +193,19 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
           <span>이 기기에서만 보여요</span>
         </div>
         <p className="text-xs text-gray-400 font-medium">
-          {recipes.length}개 저장됨
+          {searchQuery ? `${filteredRecipes.length}/${recipes.length}개` : `${recipes.length}개 저장됨`}
         </p>
       </div>
 
-      {recipes.map((recipe, index) => (
+      {filteredRecipes.length === 0 && searchQuery && (
+        <div className="flex flex-col items-center py-10 text-center">
+          <span style={{ fontSize: "40px" }}>🔍</span>
+          <p className="mt-3 font-bold text-gray-600" style={{ fontSize: "14px" }}>검색 결과가 없어요</p>
+          <p className="text-gray-400 mt-1" style={{ fontSize: "12px" }}>다른 키워드로 검색해보세요</p>
+        </div>
+      )}
+
+      {filteredRecipes.map((recipe, index) => (
         <div
           key={recipe.id}
           className="card-lift bg-white rounded-2xl overflow-hidden"
