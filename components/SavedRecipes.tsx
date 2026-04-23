@@ -76,7 +76,9 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
   }
 
   function formatDate(dateStr: string) {
+    if (!dateStr) return "날짜 없음";
     const d = new Date(dateStr);
+    if (isNaN(d.getTime()) || d.getFullYear() < 2000) return "날짜 없음";
     return d.toLocaleDateString("ko-KR", {
       month: "long",
       day: "numeric",
