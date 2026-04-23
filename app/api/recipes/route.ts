@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from("recipes")
-      .insert([{ title, content, device_id: deviceId }])
+      .insert([{ title, content, device_id: deviceId, created_at: new Date().toISOString() }])
       .select()
       .single();
 
