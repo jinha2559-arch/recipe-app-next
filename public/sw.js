@@ -1,5 +1,5 @@
 // 냉장고 레시피 앱 Service Worker — 앱 셸 캐싱
-const CACHE = "recipe-app-v1";
+const CACHE = "recipe-app-v2";
 const SHELL = ["/", "/manifest.json", "/icon-192.png", "/icon-512.png"];
 
 self.addEventListener("install", (e) => {
