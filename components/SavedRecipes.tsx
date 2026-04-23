@@ -240,10 +240,6 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
               >
                 {recipe.title}
               </p>
-              <div className="date-badge mt-1">
-                <span>🕐</span>
-                <span>{formatDate(recipe.created_at)}</span>
-              </div>
             </div>
 
             {/* 버튼들 */}
