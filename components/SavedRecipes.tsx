@@ -75,17 +75,6 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
     }
   }
 
-  function formatDate(dateStr: string) {
-    if (!dateStr) return "날짜 없음";
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime()) || d.getFullYear() < 2000) return "날짜 없음";
-    return d.toLocaleDateString("ko-KR", {
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
 
   // 마크다운 간단 렌더링
   function renderContent(text: string) {
@@ -232,7 +221,6 @@ export default function SavedRecipes({ deviceId, refreshKey }: SavedRecipesProps
               {getRecipeEmoji(recipe.title, index)}
             </div>
 
-            {/* 제목 + 날짜 */}
             <div className="flex-1 min-w-0">
               <p
                 className="font-bold text-gray-900 truncate"
